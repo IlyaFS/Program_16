@@ -14,22 +14,29 @@ namespace Program_16
     {
         static void Main(string[] args)
         {
-            Type rank = new Type();
-            Tovar[] tovar = { new Tovar1(), new Tovar2(), new Tovar3(), new Tovar4(), new Tovar5() };
+
+            Tovar[] tovar = new Tovar[5];
+            double MaxPrice = int.MinValue;
+            int Max = 0;
+            for (int i = 0; i < 5; i++)
             {
-                foreach (var i in tovar)
+                tovar[i] = new Tovar();
+
+                Console.Write("Введите код товара: ");
+                tovar[i].kodTovara = int.Parse(Console.ReadLine());
+                Console.Write("Введите наименование товара: ");
+                tovar[i].nameTovara = Console.ReadLine();
+                Console.Write("Введите стоимость товара: ");
+                tovar[i].priceTovara = double.Parse(Console.ReadLine());
+                Console.WriteLine();
+
+                if (tovar[i].priceTovara > MaxPrice)
                 {
-                    rank.Show(i);
-                    Console.WriteLine();
-                    Console.Write("Введите код товара: ");
-                    int kodtovara = int.Parse(Console.ReadLine());
-                    Console.Write("Введите наименование товара: ");
-                    string nametovara = Console.ReadLine();
-                    Console.Write("Введите стоимость товара: ");
-                    int pricetovara = int.Parse(Console.ReadLine());
-                    Console.WriteLine();
+                    MaxPrice = tovar[i].priceTovara;
+                    Max = i;
                 }
-            };
+             };
+  
             JsonSerializerOptions options = new JsonSerializerOptions()
             {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
@@ -37,94 +44,28 @@ namespace Program_16
             };
 
             string jsonstring = JsonSerializer.Serialize(tovar, options);
-
             Console.WriteLine(jsonstring);
 
-            string path = "Products.json";
-            if (!File.Exists(path))
-            {
-                File.Create(path);
-            }
-
-            using (StreamWriter sx = new StreamWriter(path))
-
+            using (StreamWriter sx = new StreamWriter("../../../../Products.json"))
             {
                 sx.WriteLine(jsonstring);
             }
 
-
-            string jsonstring2 = File.ReadAllText("Products.json");
-            Tovar tovar1 = JsonSerializer.Deserialize<Tovar>(jsonstring2);
-          
+            string jsonstring2 = File.ReadAllText("../../../../Products.json");
+            Tovar[] tovar1 = JsonSerializer.Deserialize<Tovar[]>(jsonstring2);
             Console.WriteLine(jsonstring2);
+
+            Console.WriteLine("Самый дорогой товар: {0}, его стоимость сотавляет: {1}", Max, MaxPrice);
 
             Console.ReadKey();
         }
-
     }
     class Tovar
     {
-        public virtual string Type { get; set; }
-        public virtual int kodTovara { get; set; }
-        public virtual string nameTovara { get; set; }
-        public virtual double priceTovara { get; set; }
-        public virtual void ShowInfo()
-        {
-            Console.Write(Type);
-        }
-
+        public int kodTovara { get; set; }
+        public string nameTovara { get; set; }
+        public double priceTovara { get; set; }
     }
-    class Type
-    {
-        public void Show(Tovar tovar)
-        {
-            tovar.ShowInfo();
-        }
-    }
-    class Tovar1 : Tovar
-    {
-        public override string Type { get { return "Товар 1:"; } }
-        public override int kodTovara { get; set; }
-        public override string nameTovara { get; set; }
-        public override double priceTovara { get; set; }
-
-    }
-    class Tovar2 : Tovar
-    {
-        public override string Type { get { return "Товар 2:"; } }
-        public override int kodTovara { get; set; }
-        public override string nameTovara { get; set; }
-        public override double priceTovara { get; set; }
-
-
-    }
-    class Tovar3 : Tovar
-    {
-        public override string Type { get { return "Товар 3:"; } }
-        public override int kodTovara { get; set; }
-        public override string nameTovara { get; set; }
-        public override double priceTovara { get; set; }
-
-
-    }
-    class Tovar4 : Tovar
-    {
-        public override string Type { get { return "Товар 4:"; } }
-        public override int kodTovara { get; set; }
-        public override string nameTovara { get; set; }
-        public override double priceTovara { get; set; }
-
-
-    }
-    class Tovar5 : Tovar
-    {
-        public override string Type { get { return "Товар 5:"; } }
-        public override int kodTovara { get; set; }
-        public override string nameTovara { get; set; }
-        public override double priceTovara { get; set; }
-
-    }
-
 }
 //1.Необходимо разработать программу для записи информации о товаре в текстовый файл в формате json.
 
